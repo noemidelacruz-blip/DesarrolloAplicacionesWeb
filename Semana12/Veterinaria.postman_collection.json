@@ -1,0 +1,1220 @@
+{
+  "info": {
+    "name": "Veterinaria - Lab 07 (Propietario, Mascota, Consulta)",
+    "description": "Colección de pruebas del Laboratorio 07. Ejecutar las carpetas en orden (01 → 05) o usar Collection Runner. Requiere los 3 servicios levantados y la base de datos cargada.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "01 - Propietario (puerto 8081)",
+      "item": [
+        {
+          "name": "Crear propietario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{propietarioUrl}}/api/propietarios",
+              "host": [
+                "{{propietarioUrl}}"
+              ],
+              "path": [
+                "api",
+                "propietarios"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombres\": \"Noemi\",\n  \"apellidos\": \"De La Cruz Zavala\",\n  \"dni\": \"12345678\",\n  \"telefono\": \"999888777\",\n  \"email\": \"noemi@correo.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código de estado 201\", function () { pm.response.to.have.status(201); });",
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set(\"propietarioId\", json.id);",
+                  "pm.test(\"Devuelve el DNI enviado\", function () { pm.expect(json.dni).to.eql(\"12345678\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Listar propietarios",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{propietarioUrl}}/api/propietarios",
+              "host": [
+                "{{propietarioUrl}}"
+              ],
+              "path": [
+                "api",
+                "propietarios"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código de estado 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Es un arreglo con datos\", function () { pm.expect(pm.response.json()).to.be.an(\"array\").that.is.not.empty; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Obtener propietario por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{propietarioUrl}}/api/propietarios/{{propietarioId}}",
+              "host": [
+                "{{propietarioUrl}}"
+              ],
+              "path": [
+                "api",
+                "propietarios",
+                "{{propietarioId}}"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código de estado 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Actualizar propietario",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{propietarioUrl}}/api/propietarios/{{propietarioId}}",
+              "host": [
+                "{{propietarioUrl}}"
+              ],
+              "path": [
+                "api",
+                "propietarios",
+                "{{propietarioId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombres\": \"Noemi\",\n  \"apellidos\": \"De La Cruz Zavala\",\n  \"dni\": \"12345678\",\n  \"telefono\": \"911222333\",\n  \"email\": \"noemi.delacruz@correo.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código de estado 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Teléfono actualizado\", function () { pm.expect(pm.response.json().telefono).to.eql(\"911222333\"); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "02 - Mascota (puerto 8082)",
+      "item": [
+        {
+          "name": "Crear mascota",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{mascotaUrl}}/api/mascotas",
+              "host": [
+                "{{mascotaUrl}}"
+              ],
+              "path": [
+                "api",
+                "mascotas"
+              ]
+            },
+            "description": "Valida por HTTP que el propietario exista en el servicio-propietario.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Toby\",\n  \"especie\": \"Perro\",\n  \"fechaNacimiento\": \"2021-05-10\",\n  \"idPropietario\": {{propietarioId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código de estado 201\", function () { pm.response.to.have.status(201); });",
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set(\"mascotaId\", json.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Listar mascotas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{mascotaUrl}}/api/mascotas",
+              "host": [
+                "{{mascotaUrl}}"
+              ],
+              "path": [
+                "api",
+                "mascotas"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código de estado 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Obtener mascota por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{mascotaUrl}}/api/mascotas/{{mascotaId}}",
+              "host": [
+                "{{mascotaUrl}}"
+              ],
+              "path": [
+                "api",
+                "mascotas",
+                "{{mascotaId}}"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código de estado 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Listar mascotas de un propietario",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{mascotaUrl}}/api/mascotas/propietario/{{propietarioId}}",
+              "host": [
+                "{{mascotaUrl}}"
+              ],
+              "path": [
+                "api",
+                "mascotas",
+                "propietario",
+                "{{propietarioId}}"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código de estado 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Actualizar mascota",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{mascotaUrl}}/api/mascotas/{{mascotaId}}",
+              "host": [
+                "{{mascotaUrl}}"
+              ],
+              "path": [
+                "api",
+                "mascotas",
+                "{{mascotaId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Toby Junior\",\n  \"especie\": \"Perro\",\n  \"fechaNacimiento\": \"2021-05-10\",\n  \"idPropietario\": {{propietarioId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código de estado 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Nombre actualizado\", function () { pm.expect(pm.response.json().nombre).to.eql(\"Toby Junior\"); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "03 - Consulta (puerto 8083)",
+      "item": [
+        {
+          "name": "Crear consulta",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{consultaUrl}}/api/consultas",
+              "host": [
+                "{{consultaUrl}}"
+              ],
+              "path": [
+                "api",
+                "consultas"
+              ]
+            },
+            "description": "Valida por HTTP que la mascota exista en el servicio-mascota.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idMascota\": {{mascotaId}},\n  \"fecha\": \"2025-06-15\",\n  \"motivo\": \"Control general\",\n  \"diagnostico\": \"Mascota en buen estado de salud\",\n  \"costo\": 50.0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código de estado 201\", function () { pm.response.to.have.status(201); });",
+                  "var json = pm.response.json();",
+                  "pm.collectionVariables.set(\"consultaId\", json.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Listar consultas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{consultaUrl}}/api/consultas",
+              "host": [
+                "{{consultaUrl}}"
+              ],
+              "path": [
+                "api",
+                "consultas"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código de estado 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Obtener consulta por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{consultaUrl}}/api/consultas/{{consultaId}}",
+              "host": [
+                "{{consultaUrl}}"
+              ],
+              "path": [
+                "api",
+                "consultas",
+                "{{consultaId}}"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código de estado 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Listar consultas de una mascota",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{consultaUrl}}/api/consultas/mascota/{{mascotaId}}",
+              "host": [
+                "{{consultaUrl}}"
+              ],
+              "path": [
+                "api",
+                "consultas",
+                "mascota",
+                "{{mascotaId}}"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código de estado 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Actualizar consulta",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{consultaUrl}}/api/consultas/{{consultaId}}",
+              "host": [
+                "{{consultaUrl}}"
+              ],
+              "path": [
+                "api",
+                "consultas",
+                "{{consultaId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idMascota\": {{mascotaId}},\n  \"fecha\": \"2025-06-15\",\n  \"motivo\": \"Control general\",\n  \"diagnostico\": \"Mascota en buen estado de salud\",\n  \"costo\": 75.5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código de estado 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Costo actualizado\", function () { pm.expect(pm.response.json().costo).to.eql(75.5); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "04 - Casos de ERROR",
+      "item": [
+        {
+          "name": "[400] Propietario sin nombres, DNI inválido y email malo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{propietarioUrl}}/api/propietarios",
+              "host": [
+                "{{propietarioUrl}}"
+              ],
+              "path": [
+                "api",
+                "propietarios"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombres\": \"\",\n  \"apellidos\": \"Pérez\",\n  \"dni\": \"123\",\n  \"telefono\": \"999888777\",\n  \"email\": \"no-es-email\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código de estado 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Detalla los campos inválidos\", function () { var e = pm.response.json().errores; pm.expect(e).to.have.property(\"nombres\"); pm.expect(e).to.have.property(\"dni\"); pm.expect(e).to.have.property(\"email\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[409] Propietario con DNI duplicado",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{propietarioUrl}}/api/propietarios",
+              "host": [
+                "{{propietarioUrl}}"
+              ],
+              "path": [
+                "api",
+                "propietarios"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombres\": \"Otro\",\n  \"apellidos\": \"Duplicado\",\n  \"dni\": \"45678912\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código de estado 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[404] Propietario inexistente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{propietarioUrl}}/api/propietarios/9999",
+              "host": [
+                "{{propietarioUrl}}"
+              ],
+              "path": [
+                "api",
+                "propietarios",
+                "9999"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código de estado 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[400] ID con tipo incorrecto (abc)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{propietarioUrl}}/api/propietarios/abc",
+              "host": [
+                "{{propietarioUrl}}"
+              ],
+              "path": [
+                "api",
+                "propietarios",
+                "abc"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código de estado 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[400] Mascota con fecha futura y sin nombre",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{mascotaUrl}}/api/mascotas",
+              "host": [
+                "{{mascotaUrl}}"
+              ],
+              "path": [
+                "api",
+                "mascotas"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"\",\n  \"especie\": \"Gato\",\n  \"fechaNacimiento\": \"2999-01-01\",\n  \"idPropietario\": {{propietarioId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código de estado 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Reporta nombre y fechaNacimiento\", function () { var e = pm.response.json().errores; pm.expect(e).to.have.property(\"nombre\"); pm.expect(e).to.have.property(\"fechaNacimiento\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[422] Mascota con propietario que no existe",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{mascotaUrl}}/api/mascotas",
+              "host": [
+                "{{mascotaUrl}}"
+              ],
+              "path": [
+                "api",
+                "mascotas"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Fantasma\",\n  \"especie\": \"Gato\",\n  \"fechaNacimiento\": \"2022-02-02\",\n  \"idPropietario\": 9999\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código de estado 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[404] Mascota inexistente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{mascotaUrl}}/api/mascotas/9999",
+              "host": [
+                "{{mascotaUrl}}"
+              ],
+              "path": [
+                "api",
+                "mascotas",
+                "9999"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código de estado 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[400] Consulta con COSTO NEGATIVO",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{consultaUrl}}/api/consultas",
+              "host": [
+                "{{consultaUrl}}"
+              ],
+              "path": [
+                "api",
+                "consultas"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idMascota\": {{mascotaId}},\n  \"fecha\": \"2025-06-15\",\n  \"motivo\": \"Control\",\n  \"diagnostico\": \"Sano\",\n  \"costo\": -10\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código de estado 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Indica que el costo no puede ser negativo\", function () { pm.expect(pm.response.json().errores.costo).to.include(\"negativo\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[400] Consulta sin motivo ni diagnóstico",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{consultaUrl}}/api/consultas",
+              "host": [
+                "{{consultaUrl}}"
+              ],
+              "path": [
+                "api",
+                "consultas"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idMascota\": {{mascotaId}},\n  \"fecha\": \"2025-06-15\",\n  \"motivo\": \"\",\n  \"diagnostico\": \"\",\n  \"costo\": 20\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código de estado 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[400] Consulta con fecha en formato inválido",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{consultaUrl}}/api/consultas",
+              "host": [
+                "{{consultaUrl}}"
+              ],
+              "path": [
+                "api",
+                "consultas"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idMascota\": {{mascotaId}},\n  \"fecha\": \"15/06/2025\",\n  \"motivo\": \"Control\",\n  \"diagnostico\": \"Sano\",\n  \"costo\": 20\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código de estado 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[422] Consulta con mascota que no existe",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{consultaUrl}}/api/consultas",
+              "host": [
+                "{{consultaUrl}}"
+              ],
+              "path": [
+                "api",
+                "consultas"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idMascota\": 9999,\n  \"fecha\": \"2025-06-15\",\n  \"motivo\": \"Control\",\n  \"diagnostico\": \"Sano\",\n  \"costo\": 20\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código de estado 422\", function () { pm.response.to.have.status(422); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "[404] Consulta inexistente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{consultaUrl}}/api/consultas/9999",
+              "host": [
+                "{{consultaUrl}}"
+              ],
+              "path": [
+                "api",
+                "consultas",
+                "9999"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código de estado 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "05 - Eliminación (ejecutar al final)",
+      "item": [
+        {
+          "name": "Eliminar consulta",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{consultaUrl}}/api/consultas/{{consultaId}}",
+              "host": [
+                "{{consultaUrl}}"
+              ],
+              "path": [
+                "api",
+                "consultas",
+                "{{consultaId}}"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código de estado 204\", function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Verificar consulta eliminada (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{consultaUrl}}/api/consultas/{{consultaId}}",
+              "host": [
+                "{{consultaUrl}}"
+              ],
+              "path": [
+                "api",
+                "consultas",
+                "{{consultaId}}"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código de estado 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Eliminar mascota",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{mascotaUrl}}/api/mascotas/{{mascotaId}}",
+              "host": [
+                "{{mascotaUrl}}"
+              ],
+              "path": [
+                "api",
+                "mascotas",
+                "{{mascotaId}}"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código de estado 204\", function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Verificar mascota eliminada (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{mascotaUrl}}/api/mascotas/{{mascotaId}}",
+              "host": [
+                "{{mascotaUrl}}"
+              ],
+              "path": [
+                "api",
+                "mascotas",
+                "{{mascotaId}}"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código de estado 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Eliminar propietario",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{propietarioUrl}}/api/propietarios/{{propietarioId}}",
+              "host": [
+                "{{propietarioUrl}}"
+              ],
+              "path": [
+                "api",
+                "propietarios",
+                "{{propietarioId}}"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código de estado 204\", function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Verificar propietario eliminado (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{propietarioUrl}}/api/propietarios/{{propietarioId}}",
+              "host": [
+                "{{propietarioUrl}}"
+              ],
+              "path": [
+                "api",
+                "propietarios",
+                "{{propietarioId}}"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Código de estado 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "propietarioUrl",
+      "value": "http://localhost:8081"
+    },
+    {
+      "key": "mascotaUrl",
+      "value": "http://localhost:8082"
+    },
+    {
+      "key": "consultaUrl",
+      "value": "http://localhost:8083"
+    },
+    {
+      "key": "propietarioId",
+      "value": ""
+    },
+    {
+      "key": "mascotaId",
+      "value": ""
+    },
+    {
+      "key": "consultaId",
+      "value": ""
+    }
+  ]
+}
